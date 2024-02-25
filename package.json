@@ -4,11 +4,20 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "prepare": "cd ./ && husky install ./",
+    "lint-staged": "lint-staged",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "husky": "^9.0.11",
+    "lint-staged": "^15.2.2",
     "textlint": "^14.0.3"
+  },
+  "lint-staged": {
+    "*.{md}": [
+      "npm textlint --fix"
+    ]
   }
 }
