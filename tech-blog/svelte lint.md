@@ -29,6 +29,8 @@ npm install --save-dev eslint eslint-plugin-svelte svelte
 |[svelte/no-at-debug-tags](https://sveltejs.github.io/eslint-plugin-svelte/rules/no-at-debug-tags/)| `@debug`タグを禁止します。                   |
 |[svelte/no-unused-svelte-ignore](https://sveltejs.github.io/eslint-plugin-svelte/rules/no-unused-svelte-ignore/)| 不必要な`<!-- svelte-ignore`コメントを禁止します。 |
 |[svelte/no-inner-declarations](https://sveltejs.github.io/eslint-plugin-svelte/rules/no-inner-declarations/)| ネストされた関数や変数の宣言を禁止します。               |
+|[svelte/comment-directive](https://sveltejs.github.io/eslint-plugin-svelte/rules/comment-directive/)| テンプレートHTMLにeslint-disable機能を提供します。  |
+|[svelte/system](https://sveltejs.github.io/eslint-plugin-svelte/rules/system/)| このルールはこのプラグインを動作させるためのシステムルールです。    |
 
 ## 個別に追加した設定
 私個人としてはルールはガチガチにしておいて、後からもっと柔軟にしたいなと思ったときに変更するほうが好きなので、「そんな書き方しないよ！」というものも含めて設定してあります。
@@ -407,9 +409,221 @@ derived([a, b], ([one, two]) => {});
 </div >
 ```
 
-### [svelte/html-self-closing]
+### [svelte/html-self-closing](https://sveltejs.github.io/eslint-plugin-svelte/rules/html-self-closing/)
+> このルールは、HTML要素が自己終了しているかどうかを報告します。
 
 ```sveltehtml
+/* eslint svelte/html-self-closing: "error" */
+<!-- ✓ GOOD -->
+<div />
+<p>Hello</p>
+<img />
+<svelte:head />
+
+<!-- ✗ BAD -->
+<div></div>
+<p> </p>
+<img>
+<svelte:body></svelte:body>
+```
+
+### [svelte/indent](https://sveltejs.github.io/eslint-plugin-svelte/rules/indent/)
+> このルールは.svelteで一貫したインデントスタイルを強制します。デフォルトのスタイルは2スペースです。
+
+```sveltehtml
+<script>
+  /* eslint svelte/indent: "error" */
+  function click() {}
+</script>
+
+<!-- ✓ GOOD -->
+<button
+  type="button"
+  on:click={click}
+  class="my-button primally"
+>
+  CLICK ME!
+</button>
+
+<!-- ✗ BAD -->
+<button
+type="button"
+    on:click={click}
+     class="my-button primally"
+  >
+CLICK ME!
+</button>
+```
+
+私は以下のように設定しました。
+
+```json
+{
+  "svelte/indent": [
+    "error",
+    {
+      "indent": 2,
+      "ignoredNodes": [],
+      "switchCase": 1,
+      "alignAttributesVertically": true
+    }
+  ]
+}
+```
+
+### [svelte/max-attributes-per-line](https://sveltejs.github.io/eslint-plugin-svelte/rules/max-attributes-per-line/)
+> このルールは、可読性を向上させるために、一行あたりの属性/ディレクティブの最大数を制限します。
+
+```sveltehtml
+<script>
+  /* eslint svelte/max-attributes-per-line: "error" */
+</script>
+
+<!-- ✓ GOOD -->
+<input
+  type="text"
+  bind:value={text}
+  {maxlength}
+  {...attrs}
+  readonly
+  size="20"
+/>
+
+<!-- ✗ BAD -->
+<input type="text" bind:value={text} {maxlength} {...attrs} readonly />
+```
+
+こちらデフォルトでは`1`に設定されていますが、私は行が増えすぎるのも嫌なので`2`に設定しました。
+ここは個人の好みに合わせて設定してください。
+
+```json
+{
+  "svelte/max-attributes-per-line": [
+    "error",
+    {
+      "singleline": 2,
+      "multiline": 1
+    }
+  ]
+}
+```
+
+### [svelte/mustache-spacing](https://sveltejs.github.io/eslint-plugin-svelte/rules/mustache-spacing/)
+> このルールは、マスタッシュ内のスペースを統一します。
+
+```sveltehtml
+/* eslint svelte/mustache-spacing: "error" */
+<!-- ✓ GOOD -->
+{name}
+<input {id} {...attrs} />
+{@html page}
+{#if c1}...{:else if c2}...{:else}...{/if}
+{#each list as item}...{/each}
+
+<!-- ✗ BAD -->
+{ name }
+<input { id } { ...attrs } />
+{ @html page }
+{ #if c1 }...{ :else if c2 }...{ :else }...{ /if }
+{ #each list as item }...{ /each }
+```
+
+### [svelte/no-extra-reactive-curlies](https://sveltejs.github.io/eslint-plugin-svelte/rules/no-extra-reactive-curlies/)
+> このルールは、単一の式のみを含むリアクティブ・ステートメント本体を囲む中括弧`（{`と`}）`が不必要に使用されている場合報告します。
+
+```sveltehtml
+<script>
+  /* eslint svelte/no-extra-reactive-curlies: "error" */
+
+  /* ✓ GOOD */
+  $: foo = 'red';
+
+  /* ✗ BAD */
+  $: {
+    foo = 'red';
+  }
+</script>
+```
+
+### [svelte/no-spaces-around-equal-signs-in-attribute](https://sveltejs.github.io/eslint-plugin-svelte/rules/no-spaces-around-equal-signs-in-attribute/)
+> このルールでは、属性内の等号の周囲に空白を使用しません。
+
+
+```sveltehtml
+/* eslint svelte/no-spaces-around-equal-signs-in-attribute: "error" */
+<!-- ✓ GOOD -->
+<div class=""/>
+
+<!-- ✗ BAD -->
+<div class = ""/>
+```
+
+### [svelte/shorthand-attribute](https://sveltejs.github.io/eslint-plugin-svelte/rules/shorthand-attribute/)
+> このルールは、attributeの省略構文の使用を強制します。
+
+```sveltehtml
+  /* eslint svelte/shorthand-attribute: "error" */
+<!-- ✓ GOOD -->
+<button {disabled}>...</button>
+
+<!-- ✗ BAD -->
+<button disabled={disabled}>...</button>
+```
+
+### [svelte/shorthand-directive](https://sveltejs.github.io/eslint-plugin-svelte/rules/shorthand-directive/)
+> このルールは、ディレクティブで省略構文を使うことを強制します。
+
+```sveltehtml
+<script>
+  /* eslint svelte/shorthand-directive: "error" */
+  let value = 'hello!'
+  let active = true
+  let color = 'red'
+</script>
+
+<!-- ✓ GOOD -->
+<input bind:value>
+<div class:active>...</div>
+<div style:color>...</div>
+
+<!-- ✗ BAD -->
+<input bind:value={value}>
+<div class:active={active}>...</div>
+<div style:color={color}>...</div>
+```
+
+### [svelte/sort-attributes](https://sveltejs.github.io/eslint-plugin-svelte/rules/sort-attributes/)
+> このルールは属性の順序を強制することを目的としています。
+デフォルトの順序は以下
+- `this`
+- `bind:this`
+- `id`
+- `name`
+- `slot`
+- `--style-props`（同じグループ内ではアルファベット順）
+- `style`, `style:`
+- `class`
+- `class:`（同じグループ内ではアルファベット順）
+- 他（同じグループ内ではアルファベット順）
+- `bind:`, `bind:this`, `on:`
+- `use:`（同じグループ内ではアルファベット順）
+- `transition:`
+- `in:`
+- `out:`
+- `animate:`
+- `let:`（同じグループ内ではアルファベット順）
+
+私は特に順序にこだわりはないですが、揃ってる方が好きなので、デフォルトのまま使用しています。
+
+### [svelte/spaced-html-comment](https://sveltejs.github.io/eslint-plugin-svelte/rules/spaced-html-comment/)
+> このルールは、HTMLコメントの前後にスペースを強制します。
+
+```sveltehtml
+/* eslint svelte/spaced-html-comment: "error" */
+<!-- ✓ GOOD -->
+<!--✗ BAD-->
+```
+
 ## 参考文献
 - https://github.com/sveltejs/eslint-plugin-svelte?tab=readme-ov-file
 - https://sveltejs.github.io/eslint-plugin-svelte/rules/
