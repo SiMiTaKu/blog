@@ -4,9 +4,9 @@
 最近lintの有用性を実感している清水琢巳です。
 私は、株式会社ネクストビートで「おもてなしHR」という地方創生に関わる、宿泊業界に特化した転職支援プロダクトの開発をしております。
 
-現在おもてなしHRでは、svelteを採用して開発を行っています。
-その開発を行う中で、svelteのlint設定について調査を行いました。
-今回はその結果を共有したいと思います。
+現在おもてなしHRでは、svelteを採用して開発しています。
+その開発する中で、svelteのlint設定について調査をしました。
+今回はその結果を共有します。
 
 ## アジェンダ
 本記事の構成は以下のとおりです。
@@ -16,6 +16,7 @@
 3. 個別に追加したおすすめの設定
 4. まとめ
 5. 参考文献
+6. 告知
 
 ## 1. svelteのlintの導入方法
 ### 1.1. インストール
@@ -76,7 +77,7 @@ load関数は、ページ用のjsファイルまたはtsファイルでのみ使
 ```
 ### 3.2 [svelte/no-reactive-reassign](https://sveltejs.github.io/eslint-plugin-svelte/rules/no-reactive-reassign/)
 このルールは、バインドや再割り当てによって引き起こされる意図しない動作を防いでくれます。
-svelteのリアクティブ変数は、再割り当てを行うと再割り当てされた変数がリアクティブ変数として機能しなくなります。
+svelteのリアクティブ変数は、割り当てすると再割り当てされた変数がリアクティブ変数として機能しなくなります。
 
 ```sveltehtml
 <script>
@@ -174,7 +175,7 @@ openerを否定するnoをつけたnoopenerを使うことで、元ページは�
 ### 3.7 [svelte/button-has-type](https://sveltejs.github.io/eslint-plugin-svelte/rules/button-has-type/)
 このルールは、ボタンのtype属性にtypeが使われていないか、無効なtypeが使われている場合に警告を出します。
 buttonはデフォルトでsubmitボタンとして動作するため、type属性を指定しないと意図しない動作を引き起こす可能性があります。
-また明示的にtype属性を指定することで、ボタンの動作を明確にすることができるメリットもあります。
+また明示的にtype属性を指定することで、ボタンの動作を明確にできるメリットもあります。
 
 ```sveltehtml
 /* eslint svelte/button-has-type: "error" */
@@ -188,8 +189,8 @@ buttonはデフォルトでsubmitボタンとして動作するため、type属�
 ```
 
 ### 3.8 [svelte/no-ignored-unsubscribe](https://sveltejs.github.io/eslint-plugin-svelte/rules/no-ignored-unsubscribe/)
-このルールは、`subscribe()`の呼び出しによって返された サブスクライバーが、変数やプロパティに代入されていないか、関数に渡されていない場合に警告を出します。
-ストアは不要になったら、常にサブスクライブを解除すべきです。でなければサブスクリプションが有効なままとなり、メモリリークの原因となります。
+このルールは、`subscribe()`の呼び出しによって返されたサブスクライバーが、変数やプロパティに代入されていないか、関数に渡されていない場合に警告を出します。
+ストアは不要になったら、常にサブスクライブを解除すべきです。でなければサブスクリプションが有効なままとなり、メモリーリークの原因となります。
 
 ```sveltehtml
 <script>
@@ -284,7 +285,7 @@ buttonはデフォルトでsubmitボタンとして動作するため、type属�
 
 ### 3.12 [svelte/no-unused-class-name](https://sveltejs.github.io/eslint-plugin-svelte/rules/no-unused-class-name/)
 このルールは、HTMLテンプレートで使用されていないクラスを報告します。
-svelte-checkは、<style>ブロックにテンプレートで使用されていないクラスが含まれている場合、css-unused-selectorを生成しますが、このルールはその逆で、<style>ブロックで参照されていないクラスがテンプレートに含まれているケースを報告します。
+svelte-checkは、`<style>`ブロックにテンプレートで使用されていないクラスが含まれている場合、css-unused-selectorを生成しますが、このルールはその逆で、`<style>`ブロックで参照されていないクラスがテンプレートに含まれているケースを報告します。
 
 `svelte/valid-compile`で未使用のstyleを警告しているため、相性が良いです。不要なコードは削除していきましょう。
 
@@ -310,11 +311,8 @@ svelte-checkは、<style>ブロックにテンプレートで使用されてい�
 ```
 
 ### 3.13 [svelte/require-each-key](https://sveltejs.github.io/eslint-plugin-svelte/rules/require-each-key/)
-> このルールはキーのない {#each} ブロックを報告する。
-
-> [!INFORMATION]
-> Svelteのデフォルトでは、eachブロックの値を変更すると、ブロックの末尾の項目が追加・削除され、変更された値が更新される。[4]
-
+このルールはキーのない {#each} ブロックを報告します。
+Svelteのデフォルトでは、eachブロックの値を変更すると、ブロックの末尾の項目が追加・削除され、変更された値が更新されます［4］
 そのため、キーを指定することで、変更された値のみが更新されるようになります。
 
 ```sveltehtml
@@ -330,27 +328,9 @@ svelte-checkは、<style>ブロックにテンプレートで使用されてい�
 {/each}
 ```
 
-### 3.14 [svelte/require-stores-init](https://sveltejs.github.io/eslint-plugin-svelte/rules/require-stores-init/)
-> このルールは、Svelteストアを初期化する際に初期値を設定していない場合を報告します。
-
-```typescript
-/* eslint svelte/require-stores-init: "error" */
-
-import { writable, readable, derived } from 'svelte/store';
-
-/* ✓ GOOD */
-export const w1 = writable(false);
-export const r1 = readable({});
-export const d1 = derived([a, b], () => {}, false);
-
-/* ✗ BAD */
-export const w2 = writable();
-export const r2 = readable();
-export const d2 = derived([a, b], () => {});
-```
-
-### 3.15 [ svelte/valid-each-key](https://sveltejs.github.io/eslint-plugin-svelte/rules/valid-each-key/)
-> このルールは{#each}ブロックのキーが{#each}ブロックで定義された変数を使用しないことを報告します。
+### 3.14 [ svelte/valid-each-key](https://sveltejs.github.io/eslint-plugin-svelte/rules/valid-each-key/)
+このルールは{#each}ブロックのキーが{#each}ブロックで、定義された変数名ではない場合に報告します。
+eachブロック内でキーは一意である必要があります。そのため、変数名をキーとして使用することが推奨されています。
 
 ```sveltehtml
 <script>
@@ -375,48 +355,8 @@ export const d2 = derived([a, b], () => {});
 {/each}
 ```
 
-### 3.16 [svelte/derived-has-same-inputs-outputs](https://sveltejs.github.io/eslint-plugin-svelte/rules/derived-has-same-inputs-outputs/)
-> このルールは、変数名とコールバック関数の引数名が異なる場合に報告する。これは主に実装上の混乱を避けるための推奨ルールです。
-
-```typescript
-/* eslint svelte/derived-has-same-inputs-outputs: "error" */
-
-import { derived } from 'svelte/store';
-
-/* ✓ GOOD */
-derived(a, ($a) => {});
-derived(a, ($a, set) => {});
-derived([a, b], ([$a, $b]) => {});
-
-/* ✗ BAD */
-derived(a, (b) => {});
-derived(a, (b, set) => {});
-derived([a, b], ([one, two]) => {});
-```
-
-### 3.17 [svelte/html-closing-bracket-spacing](https://sveltejs.github.io/eslint-plugin-svelte/rules/html-closing-bracket-spacing/)
-> このルールは、HTML要素の終了タグの角括弧の前のスペースをフォーマットを強制します。
-> 閉じ括弧の前の間隔は、次の2つのスタイルから選択できます。
-> - always: <div />
-> - never: <div/>
-
-```sveltehtml
-/* eslint svelte/html-closing-bracket-spacing: "error" */
-<!-- ✓ GOOD -->
-<div />
-<p>Hello</p>
-<div>
-</div>
-
-<!-- ✗ BAD -->
-<div/>
-<p >Hello</p >
-<div  >
-</div >
-```
-
-### 3.18 [svelte/html-self-closing](https://sveltejs.github.io/eslint-plugin-svelte/rules/html-self-closing/)
-> このルールは、HTML要素が自己終了しているかどうかを報告します。
+### 3.15 [svelte/html-self-closing](https://sveltejs.github.io/eslint-plugin-svelte/rules/html-self-closing/)
+このルールは、HTML要素が自己終了しているかどうかを報告します。中身がない場合は自己終了タグを使うことで、コードがスッキリします。
 
 ```sveltehtml
 /* eslint svelte/html-self-closing: "error" */
@@ -433,8 +373,9 @@ derived([a, b], ([one, two]) => {});
 <svelte:body></svelte:body>
 ```
 
-### 3.19 [svelte/indent](https://sveltejs.github.io/eslint-plugin-svelte/rules/indent/)
-> このルールは.svelteで一貫したインデントスタイルを強制します。デフォルトのスタイルは2スペースです。
+### 3.16 [svelte/indent](https://sveltejs.github.io/eslint-plugin-svelte/rules/indent/)
+このルールは`.svelte`で一貫したインデントスタイルを強制します。デフォルトのスタイルは2スペースです。
+やっぱりインデントって大事ですよね。
 
 ```sveltehtml
 <script>
@@ -461,7 +402,7 @@ CLICK ME!
 </button>
 ```
 
-私は以下のように設定しました。
+私は以下のように設定しています。
 
 ```json
 {
@@ -477,8 +418,8 @@ CLICK ME!
 }
 ```
 
-### 3.20 [svelte/max-attributes-per-line](https://sveltejs.github.io/eslint-plugin-svelte/rules/max-attributes-per-line/)
-> このルールは、可読性を向上させるために、一行あたりの属性/ディレクティブの最大数を制限します。
+### 3.17 [svelte/max-attributes-per-line](https://sveltejs.github.io/eslint-plugin-svelte/rules/max-attributes-per-line/)
+このルールは、可読性を向上させるために、一行あたりの属性/ディレクティブの最大数を制限します。
 
 ```sveltehtml
 <script>
@@ -514,8 +455,8 @@ CLICK ME!
 }
 ```
 
-### 3.21 [svelte/mustache-spacing](https://sveltejs.github.io/eslint-plugin-svelte/rules/mustache-spacing/)
-> このルールは、マスタッシュ内のスペースを統一します。
+### 3.18 [svelte/mustache-spacing](https://sveltejs.github.io/eslint-plugin-svelte/rules/mustache-spacing/)
+このルールは、マスタッシュ内（中括弧内）のスペースを統一します。
 
 ```sveltehtml
 /* eslint svelte/mustache-spacing: "error" */
@@ -534,41 +475,18 @@ CLICK ME!
 { #each list as item }...{ /each }
 ```
 
-### 3.22 [svelte/no-extra-reactive-curlies](https://sveltejs.github.io/eslint-plugin-svelte/rules/no-extra-reactive-curlies/)
-> このルールは、単一の式のみを含むリアクティブ・ステートメント本体を囲む中括弧`（{`と`}）`が不必要に使用されている場合報告します。
-
-```sveltehtml
-<script>
-  /* eslint svelte/no-extra-reactive-curlies: "error" */
-
-  /* ✓ GOOD */
-  $: foo = 'red';
-
-  /* ✗ BAD */
-  $: {
-    foo = 'red';
-  }
-</script>
-```
-
-### 3.23 [svelte/shorthand-attribute](https://sveltejs.github.io/eslint-plugin-svelte/rules/shorthand-attribute/)
-このルールは、アトリビュートの省略構文の使用を強制します。
+### 3.19[svelte/shorthand-attribute](https://sveltejs.github.io/eslint-plugin-svelte/rules/shorthand-attribute/) & [svelte/shorthand-directive](https://sveltejs.github.io/eslint-plugin-svelte/rules/shorthand-directive/)
+このルールは、ディレクティブで省略構文を使うことを強制します。
 svelteは短く書けるのが魅力なので、コードがスッキリさせるためにも設定しておきましょう。
 
 ```sveltehtml
-  /* eslint svelte/shorthand-attribute: "error" */
+/* eslint svelte/shorthand-attribute: "error" */
 <!-- ✓ GOOD -->
 <button {disabled}>...</button>
 
 <!-- ✗ BAD -->
 <button disabled={disabled}>...</button>
-```
 
-### 3.24 [svelte/shorthand-directive](https://sveltejs.github.io/eslint-plugin-svelte/rules/shorthand-directive/)
-このルールは、ディレクティブで省略構文を使うことを強制します。
-svelteは短く書けるのが魅力なので、コードがスッキリさせるためにも設定しておきましょう。
-
-```sveltehtml
 <script>
   /* eslint svelte/shorthand-directive: "error" */
   let value = 'hello!'
@@ -587,7 +505,7 @@ svelteは短く書けるのが魅力なので、コードがスッキリさせ�
 <div style:color={color}>...</div>
 ```
 
-### 3.25 [svelte/sort-attributes](https://sveltejs.github.io/eslint-plugin-svelte/rules/sort-attributes/)
+### 3.20 [svelte/sort-attributes](https://sveltejs.github.io/eslint-plugin-svelte/rules/sort-attributes/)
 このルールは属性の順序を強制します。 デフォルトの順序は以下です。
 - `this`
 - `bind:this`
@@ -609,18 +527,34 @@ svelteは短く書けるのが魅力なので、コードがスッキリさせ�
 
 私は特に順序にこだわりはないですが、揃ってる方が好きなので、デフォルトのまま使用しています。
 
-### 3.26 [svelte/spaced-html-comment](https://sveltejs.github.io/eslint-plugin-svelte/rules/spaced-html-comment/)
-このルールは、HTMLコメントの前後にスペースを強制します。
-コメントの書き方は、人によって異なる場合が多いため、チーム開発では統一するために設定すると良いでしょう。
-
-```sveltehtml
-/* eslint svelte/spaced-html-comment: "error" */
-<!-- ✓ GOOD -->
-<!--✗ BAD-->
-```
+## 4. まとめ
+今回はsvelteのlint設定について調査とまとめを行いました。
+svelteのlintはかなりルールが豊富で驚きました。
+特にベストプラクティスを助けてくれるようなルールが多いので、細かく観て設定しておくことは、コード品質の担保と開発スピードの向上に繋がるはずです。
+初期設定が大変なイメージでしたが、svelteの仕様を理解するきっかけにもなり、かなり勉強になりました。
+ぜひ、svelteのlint設定を導入してみてください。
 
 ## 5. 参考文献
-- https://github.com/sveltejs/eslint-plugin-svelte?tab=readme-ov-file
-- https://sveltejs.github.io/eslint-plugin-svelte/rules/
+- [1]https://github.com/sveltejs/eslint-plugin-svelte?tab=readme-ov-file
+- [2]https://sveltejs.github.io/eslint-plugin-svelte/rules/
 - [3]https://myajo.net/tips/10672/
 - [4]https://svelte.dev/tutorial/keyed-each-blocks
+ 
+
+## 6. 告知
+We are hiring!
+本記事をご覧いただき、ネクストビートの技術や組織についてもっと話を聞いてみたいと思われたかた、カジュアルにお話しませんか？
+
+・今後のキャリアについて悩んでいる
+・記事だけでなく、より詳しい内容について知りたい
+・実際に働いている人の声を聴いてみたい
+
+など、まだ転職を決められていないかたでも、ネクストビートに少しでもご興味をお持ちいただけましたら、ぜひカジュアルにお話しましょう！
+
+🔽申し込みはこちら
+https://hrmos.co/pages/nextbeat/jobs/1000008
+
+また、ネクストビートについてはこちらもご覧ください。
+
+🔽エントランスブック
+https://note.nextbeat.co.jp/n/nd6f64ba9b8dc
