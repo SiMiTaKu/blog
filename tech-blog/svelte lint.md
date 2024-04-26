@@ -14,7 +14,7 @@
 本記事の構成は以下のとおりです。
 
 1. svelteのlintの導入方法
-2. plugin:svelte/recommendedの設定内容
+2. `plugin:svelte/recommended`の設定内容
 3. 個別に追加したおすすめの設定
 4. 僕の中のベスト3
 5. まとめ
@@ -32,7 +32,7 @@ npm install --save-dev eslint eslint-plugin-svelte svelte
 
 ### 1.2. recommended設定
 
-以下の設定を`.eslintrc.json`に追加します。これによってplugin:svelte/recommendedの設定が適用されます。
+以下の設定を`.eslintrc.json`に追加します。これによって`plugin:svelte/recommended`の設定が適用されます。
 
 ```json
 {
