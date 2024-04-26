@@ -1,6 +1,6 @@
 # svelteのeslintおすすめ設定
 
-## はじめに
+## 0.はじめに
 最近lintの有用性を実感している清水琢巳です。
 私は、株式会社ネクストビートで「おもてなしHR」という地方創生に関わる、宿泊業界に特化した転職支援プロダクトの開発をしております。
 
@@ -8,15 +8,18 @@
 その開発する中で、svelteのlint設定について調査をしました。
 今回はその結果を共有します。
 
-## アジェンダ
+※ 本記事は[eslint-plugin-svelte](https://github.com/sveltejs/eslint-plugin-svelte?tab=readme-ov-file)［1］を参考にし、私が翻訳した内容を記載しております。そのため言い回しが異なっている場合がありますが、ご了承ください。
+
+## 目次
 本記事の構成は以下のとおりです。
 
 1. svelteのlintの導入方法
 2. plugin:svelte/recommendedの設定内容
 3. 個別に追加したおすすめの設定
-4. まとめ
-5. 参考文献
-6. 告知
+4. 僕の中のベスト3
+5. まとめ
+6. 参考文献
+7. 告知
 
 ## 1. svelteのlintの導入方法
 ### 1.1. インストール
@@ -527,21 +530,38 @@ svelteは短く書けるのが魅力なので、コードがスッキリさせ�
 
 私は特に順序にこだわりはないですが、揃ってる方が好きなので、デフォルトのまま使用しています。
 
-## 4. まとめ
+## 4. 僕の中のベスト3
+### 4.1 第3位 [svelte/sort-attributes](https://sveltejs.github.io/eslint-plugin-svelte/rules/sort-attributes/)
+第3位は、`svelte/sort-attributes`です。理由は、チーム開発には欠かせないルールだと考えたからです。
+チーム開発では、コードの統一感が重要です。ですが、属性の順序は個人の好みによって異なることが多いです。
+そのため属性の順序を統一することで、コードの見通しが良くなり、コードの品質を保つことができます。
+また深く考えずとも、pre-commit時に自動で並び替えてくれるので、手間はかかりません。
+
+### 4.2 第2位  [svelte/no-unused-class-name](https://sveltejs.github.io/eslint-plugin-svelte/rules/no-unused-class-name/)
+第2位は、`svelte/no-unused-class-name`です。cssが割り当てられていないクラスを報告してくれるため、コードの見通しが良くなります。
+また[`svelte-check`](https://www.npmjs.com/package/svelte-check/v/1.1.9)にある`css-unused-selector`とも相性が良いです。
+cssやクラスは不要なものが実装されていても気づきにくいため、このルールを設定しておくことで、コードの品質を保つことができます。
+
+### 4.3 第1位 [svelte/require-each-key](https://sveltejs.github.io/eslint-plugin-svelte/rules/require-each-key/)
+第1位は、`svelte/require-each-key`です。理由は、svelteのベストプラクティスに則っているためです。
+svelteは学習コストが低く、扱いやすい点が魅力ですが、新しいフレームワークのため、ベストプラクティスを把握することが難しいです。
+svelteのlint内には、ベストプラクティスをサポートしてくれるルール多く含まれていますが、その中でも`require-each-key`は実装者が予期していない挙動を防いでくれるため、第1位に選びました。
+
+## 5. まとめ
 今回はsvelteのlint設定について調査とまとめを行いました。
 svelteのlintはかなりルールが豊富で驚きました。
 特にベストプラクティスを助けてくれるようなルールが多いので、細かく観て設定しておくことは、コード品質の担保と開発スピードの向上に繋がるはずです。
 初期設定が大変なイメージでしたが、svelteの仕様を理解するきっかけにもなり、かなり勉強になりました。
 ぜひ、svelteのlint設定を導入してみてください。
 
-## 5. 参考文献
+## 6. 参考文献
 - [1]https://github.com/sveltejs/eslint-plugin-svelte?tab=readme-ov-file
 - [2]https://sveltejs.github.io/eslint-plugin-svelte/rules/
 - [3]https://myajo.net/tips/10672/
 - [4]https://svelte.dev/tutorial/keyed-each-blocks
  
 
-## 6. 告知
+## 7. 告知
 We are hiring!
 本記事をご覧いただき、ネクストビートの技術や組織についてもっと話を聞いてみたいと思われたかた、カジュアルにお話しませんか？
 
